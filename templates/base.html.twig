@@ -14,6 +14,12 @@
         {% endblock %}
     </head>
     <body>
+    <header>
+        <a href="{{ path('home') }}">Guests</a>
+        {% for conference in conferences %}
+            <li><a href="{{ path('conference', {id: conference.id}) }}">{{ conference }}</a></li>
+        {% endfor %}
+    </header>
         {% block body %}{% endblock %}
     </body>
 </html>
