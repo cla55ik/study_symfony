@@ -3,25 +3,30 @@
 namespace App\Controller;
 
 
+use App\Repository\ConferenceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
 class ConferenceController extends AbstractController
 {
     /**
      * @Route ("/", name="home")
+     * @param Environment $twig
+     * @param ConferenceRepository $conferenceRepository
      * @return Response
-     *
      */
-    public function index(Request $request): Response
+    public function index(Environment $twig, ConferenceRepository $conferenceRepository): Response
+    {
+        return $this->render('conference/index.html.twig', [
+           'conferences'=> $conferenceRepository->findAll()
+        ]);
+    }
+
+    public function show():Response
     {
 
-        $greet = 'Hi';
-        if($name=$request->query->get('hello')){
-            $greet = sprintf('<div>Hello %s</div>', htmlspecialchars($name));
-        }
-        return new Response($greet);
     }
 }
