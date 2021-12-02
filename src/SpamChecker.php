@@ -2,6 +2,11 @@
 
 namespace App;
 
+use App\Entity\Comment;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SpamChecker
@@ -20,12 +25,16 @@ class SpamChecker
      * @param Comment $comment
      * @param array $context
      * @return int
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getSpamScore(Comment $comment, array $context) :int
     {
         $response = $this->client->request('POST', $this->endpoint,[
             'body'=>array_merge($context,[
-                'blog'=>'',
+                'blog'=>'https://guest.example.com',
                 'comment_type'=>'comment',
                 'comment_author'=>$comment->getAuthor(),
                 'comment_author_email'=>$comment->getEmail(),

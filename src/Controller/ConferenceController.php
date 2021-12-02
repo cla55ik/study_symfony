@@ -9,6 +9,7 @@ use App\Form\CommentFormType;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
 
+use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,7 +47,7 @@ class ConferenceController extends AbstractController
      * @param CommentRepository $commentRepository
      * @return Response
      */
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir):Response
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir, SpamChecker $spamChecker):Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -63,6 +64,18 @@ class ConferenceController extends AbstractController
                 $comment->setPhotoFilename($filename);
             }
             $this->entityManager->persist($comment);
+
+            $context = [
+                'user_ip'=>$request->getClientIp(),
+                'user_agent'=>$request->headers->get('user-agent'),
+                'referrer' => $request->headers->get('referrer'),
+                'permalink' => $request->getUri()
+            ];
+
+            if (2 == $spamChecker->getSpamScore($comment, $context)){
+                throw new \RuntimeException('Spam');
+            }
+
             $this->entityManager->flush();
             return $this->redirectToRoute('conference', ['slug'=>$conference->getSlug()]);
         }
