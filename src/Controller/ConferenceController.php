@@ -11,6 +11,7 @@ use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
 use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,6 +59,7 @@ class ConferenceController extends AbstractController
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws Exception
      */
     public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir, SpamChecker $spamChecker):Response
     {
