@@ -106,6 +106,9 @@
             "ref": "b131e6cbfe1b898a508987851963fff485986285"
         }
     },
+    "egulias/email-validator": {
+        "version": "3.1.2"
+    },
     "felixfbecker/advanced-json-rpc": {
         "version": "v3.2.1"
     },
@@ -252,6 +255,9 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "symfony/amqp-messenger": {
+        "version": "v5.2.12"
+    },
     "symfony/asset": {
         "version": "v5.2.12"
     },
@@ -301,6 +307,9 @@
         "version": "v2.5.0"
     },
     "symfony/doctrine-bridge": {
+        "version": "v5.2.12"
+    },
+    "symfony/doctrine-messenger": {
         "version": "v5.2.12"
     },
     "symfony/dom-crawler": {
@@ -374,6 +383,18 @@
     "symfony/intl": {
         "version": "v5.2.12"
     },
+    "symfony/mailer": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "bbfc7e27257d3a3f12a6fb0a42540a42d9623a37"
+        },
+        "files": [
+            "config/packages/mailer.yaml"
+        ]
+    },
     "symfony/maker-bundle": {
         "version": "1.36",
         "recipe": {
@@ -382,6 +403,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/messenger": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "25e3c964d3aee480b3acc3114ffb7940c89edfed"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
+        ]
     },
     "symfony/mime": {
         "version": "v5.2.12"
@@ -456,6 +489,9 @@
         "version": "v5.2.12"
     },
     "symfony/proxy-manager-bridge": {
+        "version": "v5.2.12"
+    },
+    "symfony/redis-messenger": {
         "version": "v5.2.12"
     },
     "symfony/routing": {
@@ -572,6 +608,18 @@
             "config/packages/dev/web_profiler.yaml",
             "config/packages/test/web_profiler.yaml",
             "config/routes/dev/web_profiler.yaml"
+        ]
+    },
+    "symfony/workflow": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "3b2f8ca32a07fcb00f899649053943fa3d8bbfb6"
+        },
+        "files": [
+            "config/packages/workflow.yaml"
         ]
     },
     "symfony/yaml": {

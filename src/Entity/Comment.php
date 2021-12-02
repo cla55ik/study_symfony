@@ -17,20 +17,20 @@ class Comment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
 
-    private $author;
+    private ?string $author;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank
      */
-    private $text;
+    private ?string $text;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -38,28 +38,28 @@ class Comment
      * @Assert\Email
      */
 
-    private $email;
+    private ?string $email;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private ?\DateTimeInterface $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Conference::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $conference;
+    private ?Conference $conference;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $photoFilename;
+    private ?string $photoFilename;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true, options={"default": "submitted"})
      */
-    private $state = 'submitted';
+    private string $state = 'submitted';
 
     /**
      * @ORM\PrePersist()
