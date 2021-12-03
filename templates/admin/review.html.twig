@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conference guest block{% endblock %}
+
+{% block body %}
+    <div>
+        <h3><strong>Comment {{ comment.id }}</strong> was changed to {{comment.state }} </h3>
+    </div>
+
+    <div>
+        <h5>Details of comment:</h5>
+        <div><strong>id: </strong>{{ comment.id }}</div>
+        <div><strong>author: </strong>{{ comment.author }}</div>
+        <div><strong>email: </strong>{{ comment.email }}</div>
+        <div><strong>text: </strong>{{ comment.text }}</div>
+        <div><strong>Conference: </strong><a href="{{ path('conference',{slug:comment.conference.slug}) }}">{{ comment.conference }}</a></div>
+    </div>
+
+{% endblock %}
