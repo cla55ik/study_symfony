@@ -53,15 +53,10 @@ class ConferenceController extends AbstractController
      * @param Conference $conference
      * @param CommentRepository $commentRepository
      * @param string $photoDir
-     * @param SpamChecker $spamChecker
      * @return Response
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
      * @throws Exception
      */
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir, SpamChecker $spamChecker):Response
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir):Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -87,9 +82,6 @@ class ConferenceController extends AbstractController
                 'permalink' => $request->getUri()
             ];
 
-            if (2 == $spamChecker->getSpamScore($comment, $context)){
-                throw new \RuntimeException('Spam');
-            }
 
             $this->bus->dispatch(new CommentMessage($comment->getId(),$context));
             return $this->redirectToRoute('conference', ['slug'=>$conference->getSlug()]);
