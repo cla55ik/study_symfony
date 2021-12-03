@@ -34,7 +34,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         if (!$comment){
             return;
         }
-        $comment->setState('published');
+        $comment->setState('handler');
 
         $this->entityManager->flush();
 
