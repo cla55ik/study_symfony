@@ -5,12 +5,11 @@ namespace App\Message;
 class CommentMessage
 {
     private int $id;
-    private array $context;
+
 
     public function __construct(int $id, array $context = [])
     {
         $this->id = $id;
-        $this->context = $context;
 
     }
 
@@ -19,10 +18,6 @@ class CommentMessage
         return $this->id;
     }
 
-    public function getContext():array
-    {
-        return $this->context;
-    }
 
 
 

@@ -3,59 +3,30 @@
 namespace App;
 
 use App\Entity\Comment;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+
 
 class SpamChecker
 {
-    private $client;
-    private $endpoint;
-
-    public function __construct(HttpClientInterface $client, string $akismetKey)
-    {
-        $this->client = $client;
-        $this->endpoint=sprintf('https://%s.rest.akismet.com/1.1/comment-check', $akismetKey);
-    }
-
+   private array $spam = [
+       'asd', 'dsa', 'qwerty'
+   ];
 
     /**
      * @param Comment $comment
-     * @param array $context
-     * @return int
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @return bool
      */
-    public function getSpamScore(Comment $comment, array $context) :int
+    public function getSpamCheck(Comment $comment) :bool
     {
-        $response = $this->client->request('POST', $this->endpoint,[
-            'body'=>array_merge($context,[
-                'blog'=>'https://guest.example.com',
-                'comment_type'=>'comment',
-                'comment_author'=>$comment->getAuthor(),
-                'comment_author_email'=>$comment->getEmail(),
-                'comment_date_gmt'=>$comment->getCreatedAt()->format('c'),
-                'blog_lang'=>'en',
-                'blog_charset'=>'UTF-8',
-                'is_test'=>true
-            ])
-        ]);
+        $comment_text = $comment->getText();
+        $comment_text_array = explode(' ',$comment_text);
 
-        $headers = $response->getHeaders();
-        if('discard' === ($headers['x-akisment-pro-tip'][0] ?? '')){
-            return 2;
+        foreach ($comment_text_array as $word){
+            if(in_array($word, $this->spam)){
+                return false;
+            }
         }
-
-        $content = $response->getContent();
-        if(isset($headers['x-akisment-debug-help'][0])){
-            throw new \RuntimeException(sprintf('Unable to check for spam', $content));
-        }
-
-        return 'true' === $content ? 1 : 0;
+        return true;
     }
 
 

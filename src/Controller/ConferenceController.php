@@ -9,7 +9,6 @@ use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
-use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,10 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ConferenceController extends AbstractController
 {
@@ -75,15 +70,8 @@ class ConferenceController extends AbstractController
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
 
-            $context = [
-                'message'=>$comment->getText(),
-                'user_agent'=>$request->headers->get('user-agent'),
-                'referrer' => $request->headers->get('referrer'),
-                'permalink' => $request->getUri()
-            ];
 
-
-            $this->bus->dispatch(new CommentMessage($comment->getId(),$context));
+            $this->bus->dispatch(new CommentMessage($comment->getId()));
             return $this->redirectToRoute('conference', ['slug'=>$conference->getSlug()]);
         }
 

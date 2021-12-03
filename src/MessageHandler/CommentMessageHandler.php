@@ -10,17 +10,18 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class CommentMessageHandler implements MessageHandlerInterface
 {
     private EntityManagerInterface $entityManager;
     private CommentRepository $commentRepository;
+    private SpamChecker $spamChecker;
 
-    public function __construct(EntityManagerInterface $entityManager, CommentRepository $commentRepository)
+    public function __construct(EntityManagerInterface $entityManager, CommentRepository $commentRepository, SpamChecker $spamChecker)
     {
         $this->entityManager = $entityManager;
         $this->commentRepository = $commentRepository;
+        $this->spamChecker = $spamChecker;
     }
 
     /**
@@ -32,16 +33,14 @@ class CommentMessageHandler implements MessageHandlerInterface
     {
         $comment = $this->commentRepository->find($message->getId());
         if (!$comment){
-            return;
+            $status = 'error';
+        }else{
+            $status = $this->spamChecker->getSpamCheck($comment) ? 'published' : 'spam';
         }
 
-        $context = $message->getContext();
-        $message_text = $context['message'];
 
-        $status = (strlen($message_text) > 5) ? 'published' : 'reject';
 
         $comment->setState($status);
-
         $this->entityManager->flush();
 
     }
