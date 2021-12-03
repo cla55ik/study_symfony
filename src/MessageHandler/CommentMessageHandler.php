@@ -4,7 +4,7 @@ namespace App\MessageHandler;
 
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
-use App\SpamChecker;
+use App\Service\SpamCheckerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -15,13 +15,13 @@ class CommentMessageHandler implements MessageHandlerInterface
 {
     private EntityManagerInterface $entityManager;
     private CommentRepository $commentRepository;
-    private SpamChecker $spamChecker;
+    private SpamCheckerService $spamCheckerService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommentRepository $commentRepository, SpamChecker $spamChecker)
+    public function __construct(EntityManagerInterface $entityManager, CommentRepository $commentRepository, SpamCheckerService $spamCheckerService)
     {
         $this->entityManager = $entityManager;
         $this->commentRepository = $commentRepository;
-        $this->spamChecker = $spamChecker;
+        $this->spamCheckerService = $spamCheckerService;
     }
 
     /**
@@ -35,7 +35,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         if (!$comment){
             $status = 'error';
         }else{
-            $status = $this->spamChecker->getSpamCheck($comment) ? 'published' : 'spam';
+            $status = $this->spamCheckerService->getSpamCheck($comment) ? 'published' : 'spam';
         }
 
 
