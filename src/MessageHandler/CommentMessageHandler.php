@@ -34,7 +34,13 @@ class CommentMessageHandler implements MessageHandlerInterface
         if (!$comment){
             return;
         }
-        $comment->setState('published');
+
+        $context = $message->getContext();
+        $message_text = $context['message'];
+
+        $status = (strlen($message_text) > 5) ? 'published' : 'reject';
+
+        $comment->setState($status);
 
         $this->entityManager->flush();
 
