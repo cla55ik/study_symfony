@@ -33,13 +33,10 @@ class CommentMessageHandler implements MessageHandlerInterface
     {
         $comment = $this->commentRepository->find($message->getId());
         if (!$comment){
-            $status = 'error';
-        }else{
-            $status = $this->spamCheckerService->getSpamCheck($comment) ? 'published' : 'spam';
+            return;
         }
 
-
-
+        $status = $this->spamCheckerService->getSpamCheck($comment) ? 'published' : 'spam';
         $comment->setState($status);
         $this->entityManager->flush();
 
