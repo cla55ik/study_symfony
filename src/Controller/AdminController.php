@@ -31,7 +31,7 @@ class AdminController extends AbstractController
         $accepted = !$request->query->get('reject');
 
         $machine = $registry->get($comment);
-//        dd($comment);
+
         if($machine->can($comment, 'publish')){
             $transition = $accepted ? 'publish' : 'reject';
         }else {
@@ -44,7 +44,6 @@ class AdminController extends AbstractController
         if ($accepted){
             $this->bus->dispatch(new CommentMessage($comment->getId()));
         }
-//        dd($transition, $comment);
         return $this->render('admin/review.html.twig', [
             'transition'=>$transition,
             'comment'=>$comment
