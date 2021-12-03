@@ -7,7 +7,7 @@ use App\Entity\Comment;
 class SpamCheckerService
 {
     const SPAM_ARRAY = [
-        'asd', 'dsa', 'qwerty', 'aaa'
+        'asd', 'zxc', 'qwerty', '111'
     ];
 
     /**

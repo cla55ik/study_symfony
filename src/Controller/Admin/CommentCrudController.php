@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
+
 class CommentCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -49,7 +50,6 @@ class CommentCrudController extends AbstractCrudController
             ->setLabel('Photo')
             ->onlyOnIndex();
         yield TextField::new('state');
-
         $createdAt = DateTimeField::new('createdAt')->setFormTypeOptions([
            'html5'=>true,
            'years'=>range(date('Y'), date('Y')+5),
