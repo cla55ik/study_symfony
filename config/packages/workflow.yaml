@@ -22,7 +22,7 @@ framework:
                     to: confirmation
                 reject_spam:
                     from: submitted
-                    to: confirmation
+                    to: spam
                 publish:
                     from: confirmation
                     to: published
