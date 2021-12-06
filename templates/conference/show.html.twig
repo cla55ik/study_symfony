@@ -3,6 +3,13 @@
 {% block title %}Conference Guestbook - {{ conference }}{% endblock %}
 
 {% block body %}
+
+    {% for message in app.flashes('notification') %}
+        <div class="alert alert-info alert-dismissible fade show">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <h2 class="mb-5">
         {{ conference }} Conference
     </h2>
