@@ -4,6 +4,7 @@ namespace App\MessageHandler;
 
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
+use App\Service\LoggerService;
 use App\Service\SpamCheckerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,6 +28,7 @@ class CommentMessageHandler implements MessageHandlerInterface
     private LoggerInterface $logger;
     private string $adminEmail;
     private MailerInterface $mailer;
+    private LoggerService $loggerService;
 
     public function __construct(EntityManagerInterface $entityManager,
                                 CommentRepository $commentRepository,
@@ -35,7 +37,8 @@ class CommentMessageHandler implements MessageHandlerInterface
                                 WorkflowInterface $commentStateMachine,
                                 LoggerInterface $logger,
                                 MailerInterface $mailer,
-                                string $adminEmail
+                                string $adminEmail,
+                                LoggerService $loggerService
     )
     {
         $this->entityManager = $entityManager;
@@ -46,6 +49,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         $this->logger = $logger;
         $this->mailer = $mailer;
         $this->adminEmail = $adminEmail;
+        $this->loggerService = $loggerService;
     }
 
     /**
@@ -76,6 +80,13 @@ class CommentMessageHandler implements MessageHandlerInterface
         }else{
             $this->logger->bebug('Dropping comment message', ['comment'=>$comment->getId(), 'state'=>$comment->getState()]);
         }
+
+        $log_data = [
+            'body'=>'Comment Message Handler',
+            'owner'=>'CommentMessageHandler',
+            'status'=>'test'
+        ];
+        $this->loggerService->createLog($log_data);
 
 
 //        $comment->setState($status);
