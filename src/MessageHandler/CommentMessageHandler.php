@@ -12,6 +12,8 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -24,9 +26,7 @@ class CommentMessageHandler implements MessageHandlerInterface
     private SpamCheckerService $spamCheckerService;
     private MessageBusInterface $bus;
     private WorkflowInterface $workflow;
-    private LoggerInterface $logger;
-    private string $adminEmail;
-    private MailerInterface $mailer;
+    private NotifierInterface $notifier;
     private LoggerService $loggerService;
 
     public function __construct(EntityManagerInterface $entityManager,
@@ -34,10 +34,9 @@ class CommentMessageHandler implements MessageHandlerInterface
                                 SpamCheckerService $spamCheckerService,
                                 MessageBusInterface $bus,
                                 WorkflowInterface $commentStateMachine,
-                                LoggerInterface $logger,
-                                MailerInterface $mailer,
-                                string $adminEmail,
+                                NotifierInterface $notifier,
                                 LoggerService $loggerService,
+
     )
     {
         $this->entityManager = $entityManager;
@@ -45,10 +44,8 @@ class CommentMessageHandler implements MessageHandlerInterface
         $this->spamCheckerService = $spamCheckerService;
         $this->bus = $bus;
         $this-> workflow = $commentStateMachine;
-        $this->logger = $logger;
-        $this->mailer = $mailer;
-        $this->adminEmail = $adminEmail;
         $this->loggerService = $loggerService;
+        $this->notifier = $notifier;
     }
 
     /**
@@ -78,8 +75,9 @@ class CommentMessageHandler implements MessageHandlerInterface
         } elseif($this->workflow->can($comment, 'publish')) {
             $status = 'published';
             $this->workflow->apply($comment, $status);
+            $this->notifier->send(new CommentReviewNotification($comment),...$this->notifier->getAdminRecipients());
         }else{
-            $this->logger->bebug('Dropping comment message', ['comment'=>$comment->getId(), 'state'=>$comment->getState()]);
+//            $this->logger->bebug('Dropping comment message', ['comment'=>$comment->getId(), 'state'=>$comment->getState()]);
         }
 
         $log_data = [

@@ -9,7 +9,7 @@ use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
-use App\Service\ImageOptimizerService as ImageOptimizerServiceAlias;
+use App\Service\ImageOptimizerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,10 +25,10 @@ class ConferenceController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $bus;
-    private ImageOptimizerServiceAlias $imageOptimizerService;
+    private ImageOptimizerService $imageOptimizerService;
     private string $photoDir;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $bus, ImageOptimizerServiceAlias $imageOptimizerService, string $photoDir)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $bus, ImageOptimizerService $imageOptimizerService, string $photoDir)
     {
         $this->entityManager = $entityManager;
         $this->bus = $bus;
