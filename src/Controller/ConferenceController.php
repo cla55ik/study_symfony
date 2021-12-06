@@ -9,6 +9,7 @@ use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
+use App\Service\ImageOptimizerService as ImageOptimizerServiceAlias;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,11 +23,16 @@ class ConferenceController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private MessageBusInterface $bus;
+    private ImageOptimizerServiceAlias $imageOptimizerService;
+    private string $photoDir;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $bus)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $bus, ImageOptimizerServiceAlias $imageOptimizerService, string $photoDir)
     {
         $this->entityManager = $entityManager;
         $this->bus = $bus;
+        $this->imageOptimizerService = $imageOptimizerService;
+        $this->photoDir = $photoDir;
+
     }
 
     /**
@@ -37,14 +43,9 @@ class ConferenceController extends AbstractController
     public function index(ConferenceRepository $conferenceRepository): Response
     {
 
-        $response =  $this->render('conference/index.html.twig', [
+        return $this->render('conference/index.html.twig', [
            'conferences'=> $conferenceRepository->findAll()
         ]);
-
-        $response->setSharedMaxAge(3600);
-        $response->setMaxAge(3600);
-
-        return $response;
 
     }
 
@@ -53,11 +54,10 @@ class ConferenceController extends AbstractController
      * @param Request $request
      * @param Conference $conference
      * @param CommentRepository $commentRepository
-     * @param string $photoDir
      * @return Response
      * @throws Exception
      */
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir):Response
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository):Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -67,11 +67,12 @@ class ConferenceController extends AbstractController
             if ($photo = $form['photo']->getData()){
                 $filename = bin2hex((random_bytes(6)).'.'.$photo->guessExtension());
                 try{
-                    $photo->move($photoDir, $filename);
-                }catch (FileException $e){
+                    $photo->move($this->photoDir, $filename);
+                    }catch (FileException $e){
 
                 }
                 $comment->setPhotoFilename($filename);
+                $this->imageOptimizerService->resize($this->photoDir.'/'.$comment->getPhotoFilename());
             }
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
