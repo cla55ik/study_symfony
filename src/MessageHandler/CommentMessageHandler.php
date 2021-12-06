@@ -8,7 +8,6 @@ use App\Service\LoggerService;
 use App\Service\SpamCheckerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -38,7 +37,7 @@ class CommentMessageHandler implements MessageHandlerInterface
                                 LoggerInterface $logger,
                                 MailerInterface $mailer,
                                 string $adminEmail,
-                                LoggerService $loggerService
+                                LoggerService $loggerService,
     )
     {
         $this->entityManager = $entityManager;
@@ -60,6 +59,7 @@ class CommentMessageHandler implements MessageHandlerInterface
      */
     public function __invoke(CommentMessage $message)
     {
+
         $comment = $this->commentRepository->find($message->getId());
         if (!$comment){
             return;
@@ -73,24 +73,21 @@ class CommentMessageHandler implements MessageHandlerInterface
             }
             $this->workflow->apply($comment, $transition);
             $this->entityManager->flush();
-//            $this->bus->dispatch($message);
+//          $this->bus->dispatch($message);
 
         } elseif($this->workflow->can($comment, 'publish')) {
-            $this->workflow->apply($comment, 'published');
+            $status = 'published';
+            $this->workflow->apply($comment, $status);
         }else{
             $this->logger->bebug('Dropping comment message', ['comment'=>$comment->getId(), 'state'=>$comment->getState()]);
         }
 
         $log_data = [
-            'body'=>'Comment Message Handler',
-            'owner'=>'CommentMessageHandler',
+            'body'=>'Add comment with status "' . $status . '"',
+            'owner'=>CommentMessageHandler::class,
             'status'=>'test'
         ];
         $this->loggerService->createLog($log_data);
-
-
-//        $comment->setState($status);
-//        $this->entityManager->flush();
 
     }
 }

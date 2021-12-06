@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Log;
-use App\Repository\LogRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class LoggerService
 {
@@ -22,7 +22,6 @@ class LoggerService
 
     /**
      * @param array $log_data
-     * @param EntityManagerInterface $entityManager
      * @return bool
      */
     public function createLog(array $log_data):bool
