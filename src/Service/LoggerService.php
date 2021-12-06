@@ -4,11 +4,9 @@ namespace App\Service;
 
 use App\Entity\Log;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class LoggerService
 {
-    private Log $log;
     private EntityManagerInterface $entityManager;
 
     /**
@@ -16,7 +14,6 @@ class LoggerService
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
-//        $this->log = $log;
         $this->entityManager = $entityManager;
     }
 
