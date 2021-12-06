@@ -30,7 +30,7 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route ("/", name="home")
+     * @Route ("/", name="homepage")
      * @param ConferenceRepository $conferenceRepository
      * @return Response
      */
@@ -88,6 +88,18 @@ class ConferenceController extends AbstractController
             'previous'=>$offset - CommentRepository::PAGINATOR_PER_PAGE,
             'next'=>min(count($paginator), $offset + CommentRepository::PAGINATOR_PER_PAGE),
             'comment_form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/conference_header", name="conference_header")
+     * @param ConferenceRepository $conferenceRepository
+     * @return Response
+     */
+    public function conferenceHeader(ConferenceRepository $conferenceRepository): Response
+    {
+        return $this->render('conference/header.html.twig', [
+            'conferences' => $conferenceRepository->findAll()
         ]);
     }
 }
