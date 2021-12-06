@@ -20,7 +20,8 @@ use Exception;
  */
 class CommentRepository extends ServiceEntityRepository
 {
-    private const DAYS_BEFORE_REMOVE = 7;
+    private const DAYS_BEFORE_REMOVE_SPAM = 1;
+    private const DAYS_BEFORE_REMOVE_CONFIRM = 3;
     public const PAGINATOR_PER_PAGE = 2;
 
     public function __construct(ManagerRegistry $registry)
@@ -47,17 +48,17 @@ class CommentRepository extends ServiceEntityRepository
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countOldRejectded():int
+    public function countOldSpam():int
     {
-        return $this->getOldRejected()
+        return $this->getOldSpam()
             ->select('COUNT(c.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function deleteOldRejected():int
+    public function deleteOldSpam():int
     {
-        return $this->getOldRejected()
+        return $this->getOldSpam()
             ->delete()->getQuery()->execute();
     }
 
@@ -65,17 +66,57 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getOldRejected(): QueryBuilder
+    public function getOldSpam(): QueryBuilder
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.state = :state_spam')
             ->andWhere('c.createdAt < :date')
             ->setParameters([
                 'state_spam'=>'spam',
-                'date' => new \DateTime(-self::DAYS_BEFORE_REMOVE)
+                'date' => new \DateTime(-self::DAYS_BEFORE_REMOVE_SPAM)
             ])
             ;
     }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countOldUnconfirmed():int
+    {
+        return $this->getOldUnconfirmed()
+            ->select('COUNT(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function deleteOldUnconfirmed():int
+    {
+        return $this->getOldUnconfirmed()
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getOldUnconfirmed(): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.state = :state_unconfirmed')
+            ->andWhere('c.createdAt < :date')
+            ->setParameters([
+                'state_unconfirmed'=>'confirmation',
+                'date'=> new \DateTime(-self::DAYS_BEFORE_REMOVE_CONFIRM)
+            ])
+            ;
+    }
+
+
 
     // /**
     //  * @return Comment[] Returns an array of Comment objects

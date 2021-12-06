@@ -43,12 +43,18 @@ class CommentCleanupCommand extends Command
         if($input->getOption('dry-run')){
             $io->note('dry mode enabled');
 
-            $count = $this->commentRepository->countOldRejectded();
+            $count_spam = $this->commentRepository->countOldSpam();
+            $count = $this->commentRepository->countOldUnconfirmed();
         }else{
-            $count = $this->commentRepository->deleteOldRejected();
+            $count_spam = $this->commentRepository->deleteOldSpam();
+            $count = $this->commentRepository->deleteOldUnconfirmed();
+
         }
 
-        $io->success(sprintf('Delete "%d" old spam comments.', $count));
+        $io->success(sprintf('Delete "%d" old spam comments.', $count_spam));
+        $io->success(sprintf('Delete "%s" old unconfirmed messages', $count));
+
+
         return 0;
     }
 }
