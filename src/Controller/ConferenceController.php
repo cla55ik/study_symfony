@@ -36,9 +36,15 @@ class ConferenceController extends AbstractController
      */
     public function index(ConferenceRepository $conferenceRepository): Response
     {
-        return $this->render('conference/index.html.twig', [
+
+        $response =  $this->render('conference/index.html.twig', [
            'conferences'=> $conferenceRepository->findAll()
         ]);
+
+        $response->setSharedMaxAge(3600);
+        $response->setMaxAge(3600);
+
+        return $response;
 
     }
 
@@ -73,14 +79,8 @@ class ConferenceController extends AbstractController
             $this->bus->dispatch(new CommentMessage($comment->getId()));
             return $this->redirectToRoute('conference', ['slug'=>$conference->getSlug()]);
         }
-
-
         $offset = max(0, $request->query->getInt('offset',0));
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
-
-//        dd(gettype($request->attributes));
-
-//        dd($request->attributes->all()['_controller']);
 
         return $this->render('conference/show.html.twig',[
             'conference'=>$conference,

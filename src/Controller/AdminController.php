@@ -12,6 +12,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/admin", name="admin")
+ */
 class AdminController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -24,7 +27,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/comment/review/{id}", name="review_comment")
+     * @Route("/comment/review/{id}", name="review_comment")
      */
     public function reviewComment(Request $request, Comment $comment, Registry $registry):Response
     {
