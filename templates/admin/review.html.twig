@@ -3,6 +3,10 @@
 {% block title %}Conference guest block{% endblock %}
 
 {% block body %}
+    {% if transition is defined and transition is not empty %}
+        {{ transition }}
+    {% endif %}
+    {% if(comment is defined and comment is not empty) %}
     <div>
         <h3><strong>Comment {{ comment.id }}</strong> was changed to {{comment.state }} </h3>
     </div>
@@ -15,5 +19,6 @@
         <div><strong>text: </strong>{{ comment.text }}</div>
         <div><strong>Conference: </strong><a href="{{ path('conference',{slug:comment.conference.slug}) }}">{{ comment.conference }}</a></div>
     </div>
+    {% endif %}
 
 {% endblock %}

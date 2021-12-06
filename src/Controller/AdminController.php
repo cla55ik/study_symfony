@@ -28,19 +28,25 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/comment/review/{id}", name="review_comment")
+     * @param Request $request
+     * @param Comment $comment
+     * @param Registry $registry
+     * @return Response
      */
     public function reviewComment(Request $request, Comment $comment, Registry $registry):Response
     {
         $accepted = !$request->query->get('reject');
-
         $machine = $registry->get($comment);
 
         if($machine->can($comment, 'publish')){
             $transition = $accepted ? 'publish' : 'reject';
         }else {
-            return new Response('Comment already reviewed' . $request->query->get('reject'));
-        }
+            return $this->render('admin/review.html.twig', [
+                'transition'=>'Comment already reviewed',
 
+            ]);
+//            return new Response('Comment already reviewed' . $request->query->get('reject'));
+        }
         $machine->apply($comment, $transition);
         $this->entityManager->flush();
 
