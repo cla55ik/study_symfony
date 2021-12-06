@@ -3,7 +3,10 @@
 namespace App\Command;
 
 use App\Repository\CommentRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,7 +30,7 @@ class CommentCleanupCommand extends Command
     {
         $this
             ->setDescription('Deletes comment from database')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run')
+            ->addOption('dry-run', null, InputOption::VALUE_REQUIRED, 'Dry run')
         ;
     }
 
@@ -35,6 +38,8 @@ class CommentCleanupCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
