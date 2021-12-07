@@ -24,7 +24,7 @@ security:
             security: false
         admin:
             pattern: ^/admin
-            anonymous: true
+            anonymous: false
 #            lazy: true
             provider: app_admin_provider
             form_login:
@@ -69,5 +69,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/profile, roles: ROLE_USER }
+#         - { path: ^/admin, roles: ROLE_ADMIN }
+#         - { path: ^/profile, roles: ROLE_USER }

@@ -41,13 +41,14 @@ class LoggerService
     {
         $createdAt = new \DateTime();
 
-
         $log = new Log();
         $log->setStatus($log_data['status']);
         $log->setOwner($log_data['owner']);
         $log->setBody($log_data['body']);
         $log->setCreatedAt($createdAt);
-        $this->entityManager->persist();
+
+        $this->entityManager->persist($log);
+        $this->entityManager->flush();
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,13 +31,15 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     private UrlGeneratorInterface $urlGenerator;
     private CsrfTokenManagerInterface $csrfTokenManager;
     private UserPasswordEncoderInterface $passwordEncoder;
+    private LoggerService $loggerService;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, LoggerService $loggerService)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->loggerService = $loggerService;
     }
 
     public function supports(Request $request): bool
@@ -94,6 +97,8 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
+//        $request->getUser();
+        $this->setLog();
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         return new RedirectResponse($this->urlGenerator->generate('homepage'));
@@ -102,5 +107,19 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     protected function getLoginUrl(): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    private function setLog()
+    {
+//        $log_data['body'] = 'User is login';
+//        $log_data['status'] = 'info';
+//        $log_data['owner'] = AppAuthenticator::class;
+        $log_data = [
+            'body'=>'User is login',
+            'owner'=>AppAuthenticator::class,
+            'status'=>'test'
+        ];
+
+        $this->loggerService->loginLog($log_data);
     }
 }
