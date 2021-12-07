@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractController
+class AdminSecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/admin/login", name="app_admin_login")
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -23,11 +23,11 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('admin/admin-login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route("/admin/logout", name="app_admin_logout")
      */
     public function logout(): void
     {

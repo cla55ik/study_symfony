@@ -2,27 +2,61 @@ security:
     encoders:
         App\Entity\Admin:
             algorithm: auto
+        App\Entity\User:
+            algorithm: auto
+
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
+                class: App\Entity\User
+                property: username
+        app_admin_provider:
+            entity:
                 class: App\Entity\Admin
                 property: username
+        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
+        admin:
+            pattern: ^/admin
             anonymous: true
-            lazy: true
+#            lazy: true
+            provider: app_admin_provider
+            form_login:
+                login_path: /admin/login
+                check_path: /admin/login_check
+                default_target_path: /admin/login
+                username_parameter: username
+                password_parameter: password
+            guard:
+                authenticators:
+                    - App\Security\AdminAuthenticator
+#                entry_point: App\Security\AdminAuthenticator
+            logout:
+                path: app_logout
+                target: /admin/login
+        main:
+            pattern: ^/
+            anonymous: true
+#            lazy: true
             provider: app_user_provider
+            form_login:
+                login_path: /login
+                check_path: /login_check
+                default_target_path: /login
+                username_parameter: username
+                password_parameter: password
             guard:
                 authenticators:
                     - App\Security\AppAuthenticator
             logout:
                 path: app_logout
+                target: /login
                 # where to redirect after logout
                 # target: app_any_route
 
@@ -36,4 +70,4 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/profile, roles: ROLE_USER }
